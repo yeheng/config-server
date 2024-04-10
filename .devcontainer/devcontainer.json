@@ -14,15 +14,13 @@
     // }
   },
   "features": {
-    "ghcr.io/devcontainers/features/node:1": {},
     "ghcr.io/devcontainers/features/rust:1": {},
-    "devwasm.azurecr.io/dev-wasm/dev-wasm-feature/rust-wasi:0": {}
+    "devwasm.azurecr.io/dev-wasm/dev-wasm-feature/rust-wasi:0": {},
+    "ghcr.io/devcontainers/features/git:1": {}
   },
-  // Features to add to the dev container. More info: https://containers.dev/features.
-  // "features": {},
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   "forwardPorts": [
-    5080,
+    8080,
     8081
   ]
   // Configure tool-specific properties.
