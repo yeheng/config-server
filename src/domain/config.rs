@@ -9,9 +9,9 @@ pub const OP_DELETE: &'static str = "DELETE";
 /// App is a struct that represents the app
 #[derive(Serialize, Deserialize, Debug)]
 pub struct App {
-    pub id: i32,
-    pub is_deleted: Option<bool>,
-    pub delete_at: Option<DateTime>,
+    pub id: u32,
+    pub is_deleted: Option<u8>,
+    pub deleted_at: Option<DateTime>,
     pub created_by: Option<String>,
     pub created_time: Option<DateTime>,
     pub last_modified_by: Option<String>,
@@ -26,13 +26,18 @@ pub struct App {
 
 }
 
+rbatis::crud!(App {});
+impl_select_page!(App{select_page() =>"
+     if !sql.contains('count(1)'):
+       `order by created_time desc`"});
+
 ///
 /// AppNamespace is a struct that represents the namespace for an app.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct AppNamespace {
-    pub id: i32,
-    pub is_deleted: Option<bool>,
-    pub delete_at: Option<DateTime>,
+    pub id: u32,
+    pub is_deleted: Option<u8>,
+    pub deleted_at: Option<DateTime>,
     pub created_by: Option<String>,
     pub created_time: Option<DateTime>,
     pub last_modified_by: Option<String>,
@@ -49,9 +54,9 @@ pub struct AppNamespace {
 /// ServiceRegistry is a struct that represents the service registry.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ServiceRegistry {
-    pub id: i32,
-    pub is_deleted: Option<bool>,
-    pub delete_at: Option<DateTime>,
+    pub id: u32,
+    pub is_deleted: Option<u8>,
+    pub deleted_at: Option<DateTime>,
     pub created_by: Option<String>,
     pub created_time: Option<DateTime>,
     pub last_modified_by: Option<String>,
@@ -65,9 +70,9 @@ pub struct ServiceRegistry {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ServerConfig {
-    pub id: i32,
-    pub is_deleted: Option<bool>,
-    pub delete_at: Option<DateTime>,
+    pub id: u32,
+    pub is_deleted: Option<u8>,
+    pub deleted_at: Option<DateTime>,
     pub created_by: Option<String>,
     pub created_time: Option<DateTime>,
     pub last_modified_by: Option<String>,
@@ -79,11 +84,16 @@ pub struct ServerConfig {
     pub comment: Option<String>,
 }
 
+rbatis::crud!(ServerConfig {});
+impl_select_page!(ServerConfig{select_page() =>"
+     if !sql.contains('count(1)'):
+       `order by created_time desc`"});
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ReleaseMessage {
-    pub id: i32,
-    pub is_deleted: Option<bool>,
-    pub delete_at: Option<DateTime>,
+    pub id: u32,
+    pub is_deleted: Option<u8>,
+    pub deleted_at: Option<DateTime>,
     pub created_by: Option<String>,
     pub created_time: Option<DateTime>,
     pub last_modified_by: Option<String>,
@@ -94,9 +104,9 @@ pub struct ReleaseMessage {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ReleaseHistory {
-    pub id: i32,
-    pub is_deleted: Option<bool>,
-    pub delete_at: Option<DateTime>,
+    pub id: u32,
+    pub is_deleted: Option<u8>,
+    pub deleted_at: Option<DateTime>,
     pub created_by: Option<String>,
     pub created_time: Option<DateTime>,
     pub last_modified_by: Option<String>,
@@ -113,9 +123,9 @@ pub struct ReleaseHistory {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Release {
-    pub id: i32,
-    pub is_deleted: Option<bool>,
-    pub delete_at: Option<DateTime>,
+    pub id: u32,
+    pub is_deleted: Option<u8>,
+    pub deleted_at: Option<DateTime>,
     pub created_by: Option<String>,
     pub created_time: Option<DateTime>,
     pub last_modified_by: Option<String>,
@@ -133,9 +143,9 @@ pub struct Release {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Privilege {
-    pub id: i32,
-    pub is_deleted: Option<bool>,
-    pub delete_at: Option<DateTime>,
+    pub id: u32,
+    pub is_deleted: Option<u8>,
+    pub deleted_at: Option<DateTime>,
     pub created_by: Option<String>,
     pub created_time: Option<DateTime>,
     pub last_modified_by: Option<String>,
@@ -148,9 +158,9 @@ pub struct Privilege {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Namespace {
-    pub id: i32,
-    pub is_deleted: Option<bool>,
-    pub delete_at: Option<DateTime>,
+    pub id: u32,
+    pub is_deleted: Option<u8>,
+    pub deleted_at: Option<DateTime>,
     pub created_by: Option<String>,
     pub created_time: Option<DateTime>,
     pub last_modified_by: Option<String>,
@@ -163,9 +173,9 @@ pub struct Namespace {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct NamespaceLock {
-    pub id: i32,
-    pub is_deleted: Option<bool>,
-    pub delete_at: Option<DateTime>,
+    pub id: u32,
+    pub is_deleted: Option<u8>,
+    pub deleted_at: Option<DateTime>,
     pub created_by: Option<String>,
     pub created_time: Option<DateTime>,
     pub last_modified_by: Option<String>,
@@ -176,9 +186,9 @@ pub struct NamespaceLock {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Item {
-    pub id: i32,
-    pub is_deleted: Option<bool>,
-    pub delete_at: Option<DateTime>,
+    pub id: u32,
+    pub is_deleted: Option<u8>,
+    pub deleted_at: Option<DateTime>,
     pub created_by: Option<String>,
     pub created_time: Option<DateTime>,
     pub last_modified_by: Option<String>,
@@ -195,7 +205,7 @@ pub struct Item {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InstanceConfig {
-    pub id: i32,
+    pub id: u32,
     pub last_modified_by: Option<String>,
     pub last_modified_time: Option<DateTime>,
 
@@ -210,7 +220,7 @@ pub struct InstanceConfig {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Instance {
-    pub id: i32,
+    pub id: u32,
     pub last_modified_by: Option<String>,
     pub last_modified_time: Option<DateTime>,
 
@@ -223,9 +233,9 @@ pub struct Instance {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct GrayReleaseRule {
-    pub id: i32,
-    pub is_deleted: Option<bool>,
-    pub delete_at: Option<DateTime>,
+    pub id: u32,
+    pub is_deleted: Option<u8>,
+    pub deleted_at: Option<DateTime>,
     pub created_by: Option<String>,
     pub created_time: Option<DateTime>,
     pub last_modified_by: Option<String>,
@@ -243,9 +253,9 @@ pub struct GrayReleaseRule {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Commit {
-    pub id: i32,
-    pub is_deleted: Option<bool>,
-    pub delete_at: Option<DateTime>,
+    pub id: u32,
+    pub is_deleted: Option<u8>,
+    pub deleted_at: Option<DateTime>,
     pub created_by: Option<String>,
     pub created_time: Option<DateTime>,
     pub last_modified_by: Option<String>,
@@ -261,9 +271,9 @@ pub struct Commit {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Cluster {
-    pub id: i32,
-    pub is_deleted: Option<bool>,
-    pub delete_at: Option<DateTime>,
+    pub id: u32,
+    pub is_deleted: Option<u8>,
+    pub deleted_at: Option<DateTime>,
     pub created_by: Option<String>,
     pub created_time: Option<DateTime>,
     pub last_modified_by: Option<String>,
@@ -281,9 +291,9 @@ pub struct Cluster {
 /// openapi 接口secret
 #[derive(Serialize, Deserialize, Debug)]
 pub struct AccessKey {
-    pub id: i32,
-    pub is_deleted: Option<bool>,
-    pub delete_at: Option<DateTime>,
+    pub id: u32,
+    pub is_deleted: Option<u8>,
+    pub deleted_at: Option<DateTime>,
     pub created_by: Option<String>,
     pub created_time: Option<DateTime>,
     pub last_modified_by: Option<String>,
@@ -298,9 +308,9 @@ pub struct AccessKey {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Audit {
-    pub id: i32,
-    pub is_deleted: Option<bool>,
-    pub delete_at: Option<DateTime>,
+    pub id: u32,
+    pub is_deleted: Option<u8>,
+    pub deleted_at: Option<DateTime>,
     pub created_by: Option<String>,
     pub created_time: Option<DateTime>,
     pub last_modified_by: Option<String>,
