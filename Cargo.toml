@@ -17,3 +17,4 @@ rbs = { version = "4.5"}
 rbatis = { version = "4.5"}
 rbdc-mysql = "4"
 rbdc-sqlite = "4"
+mime = "0.3.17"

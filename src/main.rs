@@ -1,9 +1,12 @@
 #[macro_use]
 extern crate rbatis;
 
-use actix_web::App;
+use std::sync::Mutex;
+
+use actix_web::{App, error, HttpResponse};
 use actix_web::HttpServer;
 use actix_web::web;
+use actix_web::web::Data;
 use rbatis::{PageRequest, RBatis};
 use rbdc_mysql::MysqlDriver;
 use serde_json::json;
@@ -29,14 +32,22 @@ async fn main() -> std::io::Result<()> {
     let data = config::ServerConfig::select_page(&rb, &PageRequest::new(1, 10)).await;
     log::info!("data: {}",  json!(data));
 
-    let factory = || {
+    let json_cfg = web::JsonConfig::default()
+        // limit request payload size
+        .limit(4096)
+        // only accept text/ plain content type
+        .content_type(|mime| mime == mime::APPLICATION_JAVASCRIPT_UTF_8)
+        // use custom error handler
+        .error_handler(|err, req| {
+            error::InternalError::from_response(err, HttpResponse::Conflict().into()).into()
+        });
+
+    HttpServer::new(move || {
         App::new()
-            // enable logger
             .wrap(actix_web::middleware::Logger::default())
-            .app_data(web::JsonConfig::default().limit(4096)) // <- limit size of the payload (global configuration)
-    };
-    HttpServer::new(factory)
-        .bind(("127.0.0.1", 8080))?
+            .app_data(Data::new(json_cfg.clone()))
+            .app_data(Data::new(rb.clone()))
+    }).bind(("127.0.0.1", 8080))?
         .run()
         .await
 }
