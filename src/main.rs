@@ -1,7 +1,8 @@
 #[macro_use]
-extern crate rbatis;
+extern crate diesel;
 
-use std::sync::Mutex;
+#[macro_use]
+extern crate log;
 
 use actix_web::{App, error, HttpResponse};
 use actix_web::HttpServer;
