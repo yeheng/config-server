@@ -1,3 +1,4 @@
+workspace = { members = ["api", "entity", "service", "util"] }
 [package]
 name = "config-server"
 version = "0.1.0"
@@ -5,6 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+entity = {path = "./entity"}
+
 actix-web = "4"
 env_logger = "0.11"
 serde = { version = "1.0", features = ["derive"] }
@@ -16,5 +19,6 @@ dotenv = "0.15"
 rbs = { version = "4.5" }
 rbatis = { version = "4.5" }
 rbdc-mysql = "4"
+
 mime = "0.3.17"
 fast_log = { version = "1.6.0", features = ["gzip", "lz4"] }

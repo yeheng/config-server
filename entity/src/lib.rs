@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate rbatis;
+
 pub mod config;
 pub mod app;
 pub mod release;

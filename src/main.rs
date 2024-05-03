@@ -1,10 +1,3 @@
-#[macro_use]
-extern crate rbatis;
-
-use actix_web::{App, error, HttpResponse};
-use actix_web::HttpServer;
-use actix_web::web;
-use actix_web::web::Data;
 use fast_log::Config;
 use fast_log::consts::LogSize;
 use fast_log::plugin::file_split::RollingType;
@@ -14,11 +7,8 @@ use rbatis::{PageRequest, RBatis};
 use rbdc_mysql::MysqlDriver;
 use serde_json::json;
 
-pub mod models;
-pub mod service;
-
-#[actix_web::main] // or #[tokio::main]
-async fn main() -> std::io::Result<()> {
+#[tokio::main]
+async fn main() {
     fast_log::init(
         Config::new()
             .level(LevelFilter::Info)
@@ -39,26 +29,26 @@ async fn main() -> std::io::Result<()> {
         "mysql://root:123456@localhost:3306/config_server",
     ).await.unwrap();
 
-    let data = models::config::ServerConfig
-        ::select_page(&rb, &PageRequest::new(1, 10)).await;
+    let data = entity::config::ServerConfig
+    ::select_page(&rb, &PageRequest::new(1, 10)).await;
     log::info!("data: {}", json!(data));
 
-    let json_cfg = web::JsonConfig::default()
-        // limit request payload size
-        .limit(4096)
-        // only accept text/ plain content type
-        .content_type(|mime| mime == mime::APPLICATION_JAVASCRIPT_UTF_8)
-        // use custom error handler
-        .error_handler(|err, _req| {
-            error::InternalError::from_response(err, HttpResponse::Conflict().into()).into()
-        });
-
-    HttpServer::new(move || {
-        App::new()
-            .wrap(actix_web::middleware::Logger::default())
-            .app_data(Data::new(json_cfg.clone()))
-            .app_data(Data::new(rb.clone()))
-    }).bind(("127.0.0.1", 8080))?
-        .run()
-        .await
+    // let json_cfg = web::JsonConfig::default()
+    //     limit request payload size
+    // .limit(4096)
+    // only accept text/ plain content type
+    // .content_type(|mime| mime == mime::APPLICATION_JAVASCRIPT_UTF_8)
+    // use custom error handler
+    // .error_handler(|err, _req| {
+    //     error::InternalError::from_response(err, HttpResponse::Conflict().into()).into()
+    // });
+    // 
+    // HttpServer::new(move || {
+    //     App::new()
+    //         .wrap(actix_web::middleware::Logger::default())
+    //         .app_data(Data::new(json_cfg.clone()))
+    //         .app_data(Data::new(rb.clone()))
+    // }).bind(("127.0.0.1", 8080))?
+    //     .run()
+    //     .await
 }
