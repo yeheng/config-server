@@ -1,9 +1,9 @@
-use actix_web::{App, error, HttpResponse, HttpServer, web};
 use actix_web::web::Data;
-use fast_log::Config;
+use actix_web::{error, web, App, HttpResponse, HttpServer};
 use fast_log::consts::LogSize;
 use fast_log::plugin::file_split::RollingType;
 use fast_log::plugin::packer::LogPacker;
+use fast_log::Config;
 use log::LevelFilter;
 use rbatis::{PageRequest, RBatis};
 use rbdc_mysql::MysqlDriver;
@@ -16,10 +16,14 @@ async fn main() {
             .level(LevelFilter::Info)
             .chan_len(Some(100000))
             .console()
-            .file_split("target/logs/",
-                        LogSize::MB(1),
-                        RollingType::All,
-                        LogPacker {})).unwrap();
+            .file_split(
+                "target/logs/",
+                LogSize::MB(1),
+                RollingType::All,
+                LogPacker {},
+            ),
+    )
+    .unwrap();
 
     log::info!("starting HTTP server at http://localhost:8080");
 
@@ -29,10 +33,11 @@ async fn main() {
     rb.link(
         MysqlDriver {},
         "mysql://root:123456@localhost:3306/config_server",
-    ).await.unwrap();
+    )
+    .await
+    .unwrap();
 
-    let data = entity::config::ServerConfig
-    ::select_page(&rb, &PageRequest::new(1, 10)).await;
+    let data = entity::config::ServerConfig::select_page(&rb, &PageRequest::new(1, 10)).await;
     log::info!("data: {}", json!(data));
 
     let json_cfg = web::JsonConfig::default()
@@ -50,5 +55,10 @@ async fn main() {
             .wrap(actix_web::middleware::Logger::default())
             .app_data(Data::new(json_cfg.clone()))
             .app_data(Data::new(rb.clone()))
-    }).bind("127.0.0.1:8080").unwrap().run().await.unwrap();
+    })
+    .bind("127.0.0.1:8080")
+    .unwrap()
+    .run()
+    .await
+    .unwrap();
 }

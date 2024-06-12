@@ -1,10 +1,10 @@
 #[macro_use]
 extern crate rbatis;
 
-pub mod config;
 pub mod app;
-pub mod release;
+pub mod config;
 pub mod namespace;
+pub mod release;
 pub mod security;
 
 pub const OP_INSERT: &str = "INSERT";

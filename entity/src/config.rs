@@ -45,7 +45,6 @@ pub struct Instance {
     pub ip: Option<String>,
 }
 
-
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Commit {
     pub id: u32,
@@ -122,4 +121,3 @@ rbatis::crud!(ServerConfig {});
 impl_select_page!(ServerConfig{select_page() =>"
      if !sql.contains('count(1)'):
        `order by created_time desc`"});
-
