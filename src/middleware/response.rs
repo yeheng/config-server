@@ -1,14 +1,7 @@
+use crate::middleware::ResponseData;
 use actix_web::{http::header::ContentType, HttpRequest, HttpResponse, Responder};
 use fancy_regex::Regex;
-use serde::Serialize;
 use serde_json::json;
-
-// 统一响应结构体
-#[derive(Debug, Serialize)]
-pub struct ResponseData {
-    pub data: String,
-    pub code: u16,
-}
 
 impl ResponseData {
     pub fn new<T>(property_name: &str, data: T) -> Self

@@ -1,7 +1,10 @@
-pub mod auth;
+use serde::Serialize;
+
 pub mod datasource;
 pub mod response;
-
-pub use response::ResponseData;
-pub use auth::Claim;
-pub use auth::RealWorldToken;
+// 统一响应结构体
+#[derive(Debug, Serialize)]
+pub struct ResponseData {
+    pub data: String,
+    pub code: u16,
+}

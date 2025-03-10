@@ -1,5 +1,8 @@
 use std::time::Duration;
 
+use crate::auth::model::Claim;
+use crate::config::{CONFIG, JWT_KEY};
+use crate::util::error::CustomError;
 use actix_http::header::HeaderName;
 use actix_web::HttpRequest;
 use base64::engine::general_purpose::STANDARD;
@@ -7,10 +10,6 @@ use base64::Engine;
 use fastdate::{DateTime, DurationFrom};
 use jsonwebtoken::{Algorithm, Header, Validation};
 use openssl::symm::{decrypt, Cipher};
-
-use crate::config::{CONFIG, JWT_KEY};
-use crate::middleware::auth::Claim;
-use crate::util::error::CustomError;
 
 /// 校验密码和哈希
 ///
@@ -31,8 +30,8 @@ pub fn verify_aes_password(password: &str, password_hash: &str) -> bool {
         None,
         STANDARD.decode(password_hash).unwrap().as_slice(),
     )
-        .map_err(|e| e.to_string())
-        .unwrap();
+    .map_err(|e| e.to_string())
+    .unwrap();
 
     password == String::from_utf8(decrypt).unwrap()
 }

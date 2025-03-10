@@ -2,19 +2,19 @@ use std::collections::HashMap;
 use std::env;
 
 use crate::config::model::ApplicationConfig;
-use config::{Config, Environment, File};
+use config::{Config, ConfigError, Environment, File};
 
 impl ApplicationConfig {
     // 创建新的ApplicationConfig实例
-    pub fn new() -> Self {
+    pub fn new() -> Result<Self, ConfigError> {
         // 从环境变量获取运行模式,默认为"dev"
         let run_mode = env::var("RUN_MODE").unwrap_or_else(|_| "dev".into());
 
         // 构建配置
         let s = Config::builder()
             // 首先合并"default"配置文件
-            .add_source(File::with_name("etc/default"))
             .add_source(File::with_name("/etc/default").required(false))
+            .add_source(File::with_name("./etc/default").required(false))
             // 添加当前环境的配置文件
             // 默认使用'development'环境
             // 注意：这个文件是可选的
@@ -22,15 +22,14 @@ impl ApplicationConfig {
             .add_source(File::with_name(&format!("/etc/config/{}", run_mode)).required(false))
             // 添加本地配置文件
             // 这个文件不应该被提交到git
-            .add_source(File::with_name("etc/local").required(false))
+            .add_source(File::with_name("./etc/local").required(false))
             // 从环境变量添加设置（使用APP前缀）
             // 例如：`APP_DEBUG=1 ./target/app` 会设置 `debug` 键
-            .add_source(Environment::with_prefix("app"))
-            .build()
-            .unwrap();
+            .add_source(Environment::with_prefix("cs"))
+            .build()?;
 
         // 反序列化配置
-        s.try_deserialize().unwrap()
+        s.try_deserialize()
     }
 
     // 根据错误代码获取错误信息
@@ -58,13 +57,6 @@ impl ApplicationConfig {
                 .unwrap()
                 .insert(error, k.to_string());
         }
-    }
-}
-
-// 为ApplicationConfig实现Default trait
-impl Default for ApplicationConfig {
-    fn default() -> Self {
-        ApplicationConfig::new()
     }
 }
 

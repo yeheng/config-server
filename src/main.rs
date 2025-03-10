@@ -4,15 +4,9 @@ use actix_web::{
     middleware::{DefaultHeaders, Logger},
     web, App, HttpServer,
 };
-use actix_web_httpauth::middleware::HttpAuthentication;
 use actix_web_lab::middleware::NormalizePath;
-use config_server::{
-    config::{app_log, CONFIG},
-    module,
-    util::error::CustomError,
-    AppState,
-};
-use tokio::try_join;
+use config_server::config::CONFIG;
+use config_server::{config::app_log, module, util::error::CustomError, AppState};
 use tracing_actix_web::TracingLogger;
 
 #[actix_web::main]
@@ -25,7 +19,7 @@ async fn main() {
     log::info!("Server running at http://{}", address);
 
     // 创建并配置 HTTP 服务器
-    let http_server = HttpServer::new(move || {
+    HttpServer::new(move || {
         App::new()
             // 添加应用状态
             .app_data(web::Data::new(AppState::new()))
@@ -54,6 +48,8 @@ async fn main() {
         log::error!("Failed to bind to {}: {}", address, e);
         std::process::exit(1);
     })
-    .expect("REASON")
-    .run();
+    .unwrap()
+    .run()
+    .await
+    .unwrap();
 }

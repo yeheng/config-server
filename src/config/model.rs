@@ -16,7 +16,6 @@ pub struct Database {
     pub sqlx_logging_level: String, // 设置 SQLx 日志记录级别
 }
 
-/// ## Redis 配置
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Redis {
     // Redis 连接 URL

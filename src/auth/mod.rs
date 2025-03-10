@@ -1,3 +1,6 @@
+use crate::auth::model::{Claim, RealWorldToken};
+use crate::util;
+use crate::util::error::CustomError::UnauthorizedError;
 use actix_http::header;
 use actix_web::dev::ServiceRequest;
 use actix_web::error::ErrorBadRequest;
@@ -5,30 +8,12 @@ use actix_web::{dev, FromRequest, HttpRequest};
 use chrono::{Local, Timelike};
 use futures_util::future::{self, LocalBoxFuture};
 
-use crate::util;
-use crate::util::error::CustomError::UnauthorizedError;
+pub mod model;
 
 // 定义错误信息常量
 pub const AUTH_REQUIRED: &str = "Authentication required!";
 pub const MISSING_SCHEME: &str = "Missing authorization scheme";
 pub const INVALID_HEADER: &str = "Invalid header value";
-
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct Claim {
-    // 必要,过期时间,UTC 时间戳
-    pub exp: usize,
-    // 可选,签发人
-    pub iss: String,
-    pub id: i64,
-    pub username: String,
-    pub permissions: Vec<String>,
-}
-
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct RealWorldToken {
-    pub scheme: String,
-    pub token: String,
-}
 
 ///接口是否在白名单中
 pub async fn validator(
