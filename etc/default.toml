@@ -1,0 +1,57 @@
+port = 8088
+host = "127.0.0.1"
+white_list_api = ["/", "/admin/sys_login", "/admin/captcha"]
+log_level = "info"
+key = "0000001511179138"
+
+[database]
+url = "postgres://postgres:123456@localhost:5432/postgres"
+pool_size = 32
+min_connections = 5
+pool_timeout = "60s"
+connect_timeout = "8s"                                     # 设置连接超时时间
+acquire_timeout = "8s"                                     # 设置获取连接超时时间
+idle_timeout = "8s"                                        # 设置空闲连接超时时间
+sqlx_logging = false                                       # 启用 SQLx 日志记录
+sqlx_logging_level = "info"                                # 设置 SQLx 日志记录级别
+
+[redis]
+url = "redis://127.0.0.1:6379/0"
+
+[kafka]
+brokers = "127.0.0.1:9092"
+topic = "tzw-live-chatroom"
+group = "tzw-live-chatroom-group"
+
+[jwt]
+secret = "pFWoIfZ4u33D413S0mRy15u8d7/lCaOfjI0Aq+aqIo/9CmWVuH4TgRQQK+KSvYhjksaNe7aUTP9XqN8oTCqfYw3rmiI1XqDlHgkWjL+z7PcfA4r3098kFn9piSCZzZ/B1Un/dB6G+5AR3fjX7wwP23JKDmtKaXo8sdhral9DQJc="
+exp = 1800
+refresh_token = 600
+issuer = "tzwshop"
+encode_key = "-----BEGIN PRIVATE KEY-----\nMC4CAQAwBQYDK2VwBCIEICZ7VioTOmD7OtCdtKzlE2Mt6Zu1ZgFeMUzQy2czP7Ya\n-----END PRIVATE KEY-----"
+decode_key = "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEA/e9nUPgeM1Fm5ugzAyewQSOe20NIKCpr6WoTIcE4U/E=\n-----END PUBLIC KEY-----"
+
+[errors]
+-1 = "未知错误"
+empty = "缺少参数"
+"arg.name_empty" = "权限名字不能为空"
+"arg.permission_empty" = "权限不能为空"
+access_token_empty = "令牌不能为空"
+access_denied = "无权限访问"
+account_empty = "账户不能为空"
+cannot_disable_admin = "不能禁用超级管理员"
+dict_exists = "字典已存在"
+permission_exists = "权限已存在"
+role_id_empty = "角色id不能为空"
+please_send_code = "请发送验证码"
+role_user_cannot_empty = "添加角色时用户和角色不能为空"
+user_not_exists = "用户不存在"
+user_and_name_cannot_empty = "用户名和姓名不能为空"
+user_cannot_find = "找不到用户"
+account_not_exists = "账号不存在"
+account_disabled = "账户被禁用"
+password_empty = "密码为空"
+password_error = "密码不正确"
+vcode_error = "验证码不正确"
+req_frequently = "操作过于频繁,请等待{}秒后重试"
+id_empty = "id不能为空"
