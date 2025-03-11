@@ -89,7 +89,7 @@ pub fn validate_token(token: &str) -> Result<Claim, actix_web::Error> {
     // FIXME Why can't I validate the token expiry time here?
     let result =
         jsonwebtoken::decode::<Claim>(token, &JWT_KEY.decoding_key, &validation).map_err(|e| {
-            CustomError::UnauthorizedError {
+            CustomError::AuthenticationError {
                 message: e.to_string(),
             }
         })?;

@@ -1,8 +1,12 @@
-port = 8088
-host = "127.0.0.1"
 white_list_api = ["/", "/admin/sys_login", "/admin/captcha"]
 log_level = "trace"
 key = "0000001511179138"
+
+[server]
+port = 8088
+host = "127.0.0.1"
+workers = 1
+keep_alive = 75
 
 [database]
 url = "postgres://postgres:123456@localhost:5432/config_server"

@@ -1,20 +1,39 @@
 use crate::config::CONFIG;
+use std::io;
 use tracing_error::ErrorLayer;
-use tracing_subscriber::layer::SubscriberExt;
-use tracing_subscriber::util::SubscriberInitExt;
-use tracing_subscriber::{fmt, EnvFilter};
+use tracing_subscriber::fmt::Layer;
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter, Registry};
 
-pub fn init_log() {
-    // 创建一个日志订阅器注册表
-    tracing_subscriber::registry()
-        // 尝试从环境变量中获取日志过滤器,如果失败则使用配置文件中的日志级别
-        .with(
-            EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new(&CONFIG.log_level)),
-        )
-        // 添加错误处理层
-        .with(ErrorLayer::default())
-        // 添加格式化层,并将输出写入标准输出
-        .with(fmt::layer().with_writer(std::io::stdout))
-        // 初始化日志系统
-        .init();
+pub fn init_log() -> Result<(), io::Error> {
+    // 设置默认日志级别
+    let env_filter =
+        EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new(&CONFIG.log_level));
+
+    let fmt_layer = Layer::default()
+        .with_target(true)
+        .with_thread_ids(true)
+        .with_thread_names(true)
+        .with_ansi(true);
+
+    let err_layer = ErrorLayer::default();
+
+    // 构建并初始化订阅者
+    match Registry::default()
+        .with(env_filter)
+        .with(fmt_layer)
+        .with(err_layer)
+        .try_init()
+    {
+        Ok(_) => {
+            log::info!("日志系统初始化成功");
+            Ok(())
+        }
+        Err(e) => {
+            eprintln!("日志初始化失败: {}", e);
+            Err(io::Error::new(
+                io::ErrorKind::Other,
+                format!("日志初始化失败: {}", e),
+            ))
+        }
+    }
 }

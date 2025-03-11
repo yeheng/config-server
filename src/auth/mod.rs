@@ -1,6 +1,6 @@
 use crate::auth::model::{Claim, RealWorldToken};
-use crate::util;
-use crate::util::error::CustomError::UnauthorizedError;
+use crate::util::auth_utils;
+use crate::util::error::CustomError::AuthenticationError;
 use actix_http::header;
 use actix_web::dev::ServiceRequest;
 use actix_web::error::ErrorBadRequest;
@@ -25,7 +25,7 @@ pub async fn validator(
         Err(e) => {
             log::debug!("解析token出错 ==> {:#?}", e);
             return Err((
-                UnauthorizedError {
+                AuthenticationError {
                     message: e.to_string(),
                 }
                 .into(),
@@ -40,7 +40,7 @@ pub async fn validator(
         "Bearer" => {}
         _ => {
             return Err((
-                UnauthorizedError {
+                AuthenticationError {
                     message: "Invalid header value".to_owned(),
                 }
                 .into(),
@@ -50,13 +50,13 @@ pub async fn validator(
     };
 
     // 验证 Token
-    let result = util::auth_utils::validate_token(&token);
+    let result = auth_utils::validate_token(&token);
     let now = Local::now().nanosecond() as usize;
     match result {
         Ok(claims) if now < claims.exp => Ok(req),
         Ok(_) => {
             log::warn!("Token 已过期！");
-            let error = UnauthorizedError {
+            let error = AuthenticationError {
                 message: "Token expired".to_owned(),
             };
             Err((error.into(), req))
@@ -160,7 +160,7 @@ impl FromRequest for Claim {
             let RealWorldToken { token, .. } = RealWorldToken::extract(&request).await?;
 
             // 验证 Token 并返回 Claims
-            util::auth_utils::validate_token(&token)
+            auth_utils::validate_token(&token)
         })
     }
 }

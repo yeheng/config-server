@@ -20,6 +20,7 @@ pub struct Database {
 pub struct Redis {
     // Redis 连接 URL
     pub url: String,
+    pub passwd: Option<String>, // Redis 密码
 }
 
 /// ## JWT 配置
@@ -36,8 +37,7 @@ pub struct Jwt {
 /// ## App配置
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ApplicationConfig {
-    pub port: u16,                                    // 端口号
-    pub host: String,                                 // 主机地址
+    pub server: ServerConfig,                         // 服务器配置
     pub database: Database,                           // 数据库配置
     pub jwt: Jwt,                                     // JWT 配置
     pub redis: Redis,                                 // Redis 配置
@@ -46,6 +46,14 @@ pub struct ApplicationConfig {
     pub white_list_api: Vec<String>,                  // 白名单 API 列表
     pub errors: HashMap<String, String>,              // 错误信息映射
     pub error_infos: Option<HashMap<String, String>>, // 错误信息详情（可选）
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct ServerConfig {
+    pub host: String,
+    pub port: u16,
+    pub workers: Option<usize>,
+    pub keep_alive: u64,
 }
 
 #[derive(Clone)]
