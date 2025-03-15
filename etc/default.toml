@@ -1,11 +1,10 @@
 white_list_api = ["/", "/admin/sys_login", "/admin/captcha"]
-log_level = "trace"
+log_level = "DEBUG"
 key = "0000001511179138"
 
 [server]
 port = 8088
 host = "127.0.0.1"
-workers = 1
 keep_alive = 75
 
 [database]

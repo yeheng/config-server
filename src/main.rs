@@ -7,7 +7,7 @@ use config_server::{
     middleware::error_handler::setup_error_handlers,
 };
 use std::net::SocketAddr;
-use std::{io, sync::Arc};
+use std::io;
 use tracing_actix_web::TracingLogger;
 
 #[actix_web::main]
@@ -34,14 +34,11 @@ async fn main() -> io::Result<()> {
     let workers = CONFIG.server.workers.unwrap_or(num_cpus::get());
     log::info!("Workers: {}", workers);
 
-    // 创建共享应用状态
-    let app_state = Arc::new(AppState::new());
-
     // 创建并配置 HTTP 服务器
     HttpServer::new(move || {
         App::new()
             // 添加应用状态
-            .app_data(web::Data::from(app_state.clone()))
+            .app_data(web::Data::new(AppState::new()))
             // 配置错误处理
             .configure(setup_error_handlers)
             .wrap(NormalizePath::trim()) // 首先规范化路径
@@ -60,7 +57,7 @@ async fn main() -> io::Result<()> {
     })
     .workers(workers) // 根据CPU核心数自动设置工作线程
     .keep_alive(std::time::Duration::from_secs(CONFIG.server.keep_alive)) // 配置keep-alive
-    .bind(&address)?
+    .bind(address)?
     .run()
     .await
 }
